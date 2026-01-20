@@ -103,17 +103,6 @@ const getProfileDefaults = () => {
   };
 };
 
-const sectionCard = (title: string, body: string) => `
-  <section class="rounded-3xl border border-white/5 bg-white/5 p-8">
-    <h2 class="text-lg font-light uppercase tracking-[0.35em] text-slate-300">
-      ${title}
-    </h2>
-    <p class="mt-4 text-sm leading-relaxed text-slate-300 sm:text-base">
-      ${body}
-    </p>
-  </section>
-`;
-
 const profilePage = () => {
   const defaults = getProfileDefaults();
   const safeFirstName = escapeHtml(defaults.firstName);
@@ -545,11 +534,9 @@ const pages: Record<string, string> = {
 const getRoute = () => {
   const hash = window.location.hash.replace('#', '');
   if (!hash) {
-    currentQueryParams = new URLSearchParams();
     return '/';
   }
-  const [pathPart, queryString] = hash.split('?');
-  currentQueryParams = new URLSearchParams(queryString ?? '');
+  const [pathPart] = hash.split('?');
   return pathPart.startsWith('/') ? pathPart : `/${pathPart}`;
 };
 
@@ -1028,7 +1015,6 @@ var galleryUploadYear: number | null = null;
 var galleryUploadOpen = false;
 var galleryUploadError: string | null = null;
 var galleryUploadLoading = false;
-var currentQueryParams = new URLSearchParams();
 window.openGalleryUpload = (year: number) => {
   if (!Number.isNaN(year)) {
     galleryUploadYear = year;
@@ -1083,6 +1069,8 @@ window.submitGalleryUpload = () => {
   if (!fileInput || !currentUser || !galleryUploadYear) {
     return;
   }
+  const userId = currentUser.id;
+  const year = galleryUploadYear;
   const files = Array.from(fileInput.files ?? []);
   if (!files.length) {
     galleryUploadError = 'Izvēlies attēlu.';
@@ -1111,8 +1099,8 @@ window.submitGalleryUpload = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: currentUser.id,
-          year: galleryUploadYear,
+          userId,
+          year,
           imageBase64,
         }),
       });
