@@ -40,7 +40,9 @@ type UserProfile = {
 type GallerySummary = Record<number, number>;
 
 const GOOGLE_CLIENT_ID = '230576623376-0gdvkur7dt49lea75pq9am271r6scjdq.apps.googleusercontent.com';
-const API_BASE_URL = 'http://localhost:3001';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ??
+  (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
 
 const loadUser = (): UserProfile | null => {
   const stored = localStorage.getItem('boat_trip_user');
